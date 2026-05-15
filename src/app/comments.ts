@@ -6,7 +6,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
   items: [] as Comment[],
-  commentsLoading: false,
+  loaded: false,
   hasError: false,
 };
 
@@ -22,6 +22,9 @@ export const commentsSlice = createSlice({
     setComments(state, { payload }: PayloadAction<Comment[]>) {
       state.items = payload;
     },
+    setLoaded(state, { payload }: PayloadAction<boolean>) {
+      state.loaded = payload;
+    },
     addComment(state, action: PayloadAction<Comment>) {
       state.items.push(action.payload);
     },
@@ -33,17 +36,17 @@ export const commentsSlice = createSlice({
     builder.addCase(loadComments.pending, state => {
       state.items = [];
       state.hasError = false;
-      state.commentsLoading = true;
+      state.loaded = false;
     });
 
     builder.addCase(loadComments.fulfilled, (state, action) => {
       state.items = action.payload;
-      state.commentsLoading = false;
+      state.loaded = true;
     });
 
     builder.addCase(loadComments.rejected, state => {
       state.hasError = true;
-      state.commentsLoading = false;
+      state.loaded = true;
     });
   },
 });

@@ -15,9 +15,7 @@ type Props = {
 
 export const PostDetails: React.FC<Props> = ({ post }) => {
   const dispatch = useAppDispatch();
-  const { commentsLoading, items, hasError } = useAppSelector(
-    state => state.comments,
-  );
+  const { loaded, items, hasError } = useAppSelector(state => state.comments);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -46,6 +44,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
     } catch (error) {
       // we show an error message in case of any error
       dispatch(commentsSlice.actions.setError(true));
+      dispatch(commentsSlice.actions.setLoaded(true));
     }
   };
 
@@ -63,6 +62,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       await commentsApi.deleteComment(commentId);
     } catch {
       dispatch(commentsSlice.actions.setError(true));
+      dispatch(commentsSlice.actions.setLoaded(true));
     }
   };
 
@@ -75,21 +75,21 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       </div>
 
       <div className="block">
-        {commentsLoading && <Loader />}
+        {!loaded && <Loader />}
 
-        {!commentsLoading && hasError && (
+        {loaded && hasError && (
           <div className="notification is-danger" data-cy="CommentsError">
             Something went wrong
           </div>
         )}
 
-        {!commentsLoading && !hasError && items.length === 0 && (
+        {loaded && !hasError && items.length === 0 && (
           <p className="title is-4" data-cy="NoCommentsMessage">
             No comments yet
           </p>
         )}
 
-        {!commentsLoading && !hasError && items.length > 0 && (
+        {loaded && !hasError && items.length > 0 && (
           <>
             <p className="title is-4">Comments:</p>
 
@@ -123,7 +123,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
           </>
         )}
 
-        {!commentsLoading && !hasError && !visible && (
+        {loaded && !hasError && !visible && (
           <button
             data-cy="WriteCommentButton"
             type="button"
@@ -134,7 +134,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
           </button>
         )}
 
-        {!commentsLoading && !hasError && visible && (
+        {loaded && !hasError && visible && (
           <NewCommentForm onSubmit={addComment} />
         )}
       </div>

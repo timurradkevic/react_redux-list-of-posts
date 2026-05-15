@@ -6,7 +6,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
   items: [] as Post[],
-  postsLoading: false,
+  loaded: false,
   hasError: false,
 };
 
@@ -22,8 +22,8 @@ export const postsSlice = createSlice({
     setPosts(state, { payload }: PayloadAction<Post[]>) {
       state.items = payload;
     },
-    setPostsLoading(state, { payload }: PayloadAction<boolean>) {
-      state.postsLoading = payload;
+    setLoaded(state, { payload }: PayloadAction<boolean>) {
+      state.loaded = payload;
     },
     setError(state, { payload }: PayloadAction<boolean>) {
       state.hasError = payload;
@@ -33,17 +33,17 @@ export const postsSlice = createSlice({
     builder.addCase(loadPosts.pending, state => {
       state.items = [];
       state.hasError = false;
-      state.postsLoading = true;
+      state.loaded = false;
     });
 
     builder.addCase(loadPosts.fulfilled, (state, action) => {
       state.items = action.payload;
-      state.postsLoading = false;
+      state.loaded = true;
     });
 
     builder.addCase(loadPosts.rejected, state => {
       state.hasError = true;
-      state.postsLoading = false;
+      state.loaded = true;
     });
   },
 });
